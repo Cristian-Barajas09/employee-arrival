@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { Document, HydratedDocument } from 'mongoose';
 
 export enum UserRole {
     ADMIN = 'ADMIN',
@@ -9,7 +9,7 @@ export enum UserRole {
 export type UserDocument = HydratedDocument<User>;
 
 @Schema()
-export class User {
+export class User extends Document {
     @Prop({ required: true })
     firstName: string;
 
