@@ -1,13 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
 import { UsersModule } from './users/users.module.js';
 import { QrModule } from './qr/qr.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { ConfigModule } from '@nestjs/config';
+import { appConfig } from './config/application.config.js';
+import { validationSchema } from './config/zod.config.js';
 
 @Module({
-  imports: [UsersModule, QrModule, AuthModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigModule.forRoot({
+      load: [appConfig],
+      validationSchema,
+    }),
+    UsersModule,
+    QrModule,
+    AuthModule
+  ],
 })
 export class AppModule {}
