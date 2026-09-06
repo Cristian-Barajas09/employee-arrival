@@ -8,6 +8,7 @@ import { QR_GENERATOR_TOKEN } from './qr.interface.js';
             useClass: QRCodeGenerator,
             provide: QR_GENERATOR_TOKEN
         }
-    ]
+    ],
+    exports: [QR_GENERATOR_TOKEN]
 })
 export class QrModule {}
