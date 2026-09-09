@@ -9,7 +9,7 @@ export enum UserRole {
 export type UserDocument = HydratedDocument<User>;
 
 @Schema()
-export class User extends Document {
+export class User {
     @Prop({ required: true })
     firstName: string;
 

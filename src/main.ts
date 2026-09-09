@@ -10,6 +10,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
   const port = process.env.SERVER_PORT ?? 3000;
 
 
