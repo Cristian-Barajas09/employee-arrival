@@ -1,0 +1,16 @@
+services:
+  database:
+    container_name: employee_database
+    image: mongo:8.3-noble
+    ports:
+      - 27017:27017
+    volumes:
+      - employee_database:/data/db
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${DATABASE_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
+    command: ["--auth"]
+
+volumes:
+  employee_database:
