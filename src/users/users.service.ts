@@ -20,7 +20,7 @@ export class UsersService {
         return await this.userModel.find()
     }
 
-    public async findOne(userId: string): Promise<UserDocument> {
+    public async findOneById(userId: string): Promise<UserDocument> {
         const user = await this.userModel.findById(userId);
 
         if (!user) {
@@ -31,8 +31,7 @@ export class UsersService {
     }
 
     public async generateAccessQR(user: UserDocument): Promise<Buffer<ArrayBufferLike>> {
-        const generatedQR = await this.qrGenerator.generateQR(user);
-        return generatedQR;
+        return await this.qrGenerator.generateQR(user);
     }
 
 }
