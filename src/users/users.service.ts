@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { User, UserDocument } from './schemas/user.schema.js';
+import { UserArrival, UserArrivalDocument } from './schemas/user-arrival.schema.js';
 
 
 
@@ -10,6 +11,7 @@ import { User, UserDocument } from './schemas/user.schema.js';
 export class UsersService {
     public constructor(
         @InjectModel(User.name) private readonly userModel: Model<User>,
+        @InjectModel(UserArrival.name) private readonly userArrivalModel: Model<UserArrival>,
     ) { }
 
     public async create(createUserDto: CreateUserDto): Promise<UserDocument> {
@@ -38,6 +40,10 @@ export class UsersService {
         }
 
         return user;
+    }
+
+    public async registerArrival(user: UserDocument): Promise<UserArrivalDocument> {
+        return await this.userArrivalModel.create({ user: user._id });
     }
 
     

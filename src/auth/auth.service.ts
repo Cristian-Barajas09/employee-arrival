@@ -75,7 +75,8 @@ export class AuthService {
     public async generateAccessQR(user: UserDocument): Promise<GenerateUserQR> {
 
         const payload: JwtPayload = {
-            id: user.id
+            id: user.id,
+            accessType: AccessType.PHYSICAL_ACCESS,
         }
         const EXPIRES_IN = '5m'
 
@@ -88,6 +89,22 @@ export class AuthService {
         });
 
         return generatedQR;
+    }
+
+    public async validateAccessToken(token: string): Promise<UserDocument> {
+        let payload: JwtPayload;
+
+        try {
+            payload = await this.jwtService.verifyAsync<JwtPayload>(token);
+        } catch {
+            throw new UnauthorizedException('Token not valid');
+        }
+
+        if (!payload.id || payload.accessType !== AccessType.PHYSICAL_ACCESS) {
+            throw new UnauthorizedException('Token not valid');
+        }
+
+        return this.userService.findOneById(payload.id);
     }
 
     private getJwtToken(payload: JwtPayload) {
