@@ -1,11 +1,10 @@
-import { IsEmail, IsString, Matches, Max, MaxLength, Min, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Matches, Max, MaxLength, Min, MinLength } from "class-validator";
 
 export class LoginUserDTO {
 
 
     @IsString()
-    @Min(5)
-    @Max(11)
+    @IsNotEmpty()
     public dni: string;
 
     @IsString()
