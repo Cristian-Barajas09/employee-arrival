@@ -12,5 +12,18 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${DATABASE_PASSWORD}
     command: ["--auth"]
 
+  mongo-express:
+    image: mongo-express
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://${DATABASE_USER}:${DATABASE_PASSWORD}@database:27017/?authSource=admin"
+      ME_CONFIG_BASICAUTH_ENABLED: true
+      ME_CONFIG_BASICAUTH_USERNAME: mongoexpressuser
+      ME_CONFIG_BASICAUTH_PASSWORD: mongoexpresspass
+
 volumes:
   employee_database:
