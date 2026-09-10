@@ -62,6 +62,4 @@ export class UsersService {
         return arrivals.map((arrival) => UserArrivalResponseDto.fromDocument(arrival));
     }
 
-    
-
 }
