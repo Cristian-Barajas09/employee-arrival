@@ -1,6 +1,10 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, Post, Res, StreamableFile } from "@nestjs/common";
 import { UsersService } from "./users.service.js";
 import { ParseMongoIdPipe } from "../common/pipes/parse-mongo-id/parse-mongo-id.pipe.js";
+import { GetUser } from "../auth/decorators/get-user.decorator.js";
+import { type UserDocument } from "./schemas/user.schema.js";
+import { Auth } from "../auth/decorators/auth.decorator.js";
+import { type Response } from "express";
 
 
 @Controller("users")
@@ -8,7 +12,7 @@ export class UsersController {
 
     public constructor(
         private readonly usersService: UsersService
-    ) {}
+    ) { }
 
     @Get()
     public async findAll() {
@@ -20,6 +24,23 @@ export class UsersController {
         @Param("id", ParseMongoIdPipe) id: string
     ) {
         return this.usersService.findOneById(id);
+    }
+
+    @Post("generate/qr")
+    @Auth()
+    public async generateQR(
+        @GetUser() user: UserDocument,
+        @Res({ passthrough: true }) response: Response
+    ) {
+
+        const generatedAccess = await this.usersService.generateAccessQR(user);
+
+        response.set({
+            'Content-Type': 'image/png',
+        });
+
+
+        return new StreamableFile(generatedAccess);
     }
 
 }

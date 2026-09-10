@@ -8,7 +8,7 @@ export class QRCodeGenerator implements QRGenerator {
         const encodedMetadata = JSON.stringify(metadata);
 
         return await QRCode.toBuffer(encodedMetadata, {
-            margin: 8,
+            margin: 4,
             scale: 5,
             errorCorrectionLevel: 'M'
         })
