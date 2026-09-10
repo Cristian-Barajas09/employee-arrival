@@ -6,6 +6,7 @@ import { User, UserDocument } from './schemas/user.schema.js';
 import { UserArrival, UserArrivalDocument } from './schemas/user-arrival.schema.js';
 import { UserArrivalResponseDto } from './dto/user-arrival-response.dto.js';
 import { UserResponseDto } from './dto/user-response.dto.js';
+import { PaginationDTO } from '../common/dto/pagination.dto.js';
 
 
 
@@ -20,8 +21,11 @@ export class UsersService {
         return await this.userModel.create(createUserDto);
     }
 
-    public async findAll(): Promise<UserResponseDto[]> {
-        const users = await this.userModel.find();
+    public async findAll(pagination: PaginationDTO): Promise<UserResponseDto[]> {
+        const users = await this.userModel
+            .find()
+            .skip(pagination.offset)
+            .limit(pagination.limit);
 
         return users.map(UserResponseDto.fromDocument);
     }
@@ -53,11 +57,13 @@ export class UsersService {
         return UserArrivalResponseDto.fromDocument(populatedArrival);
     }
 
-    public async findArrivals(): Promise<UserArrivalResponseDto[]> {
+    public async findArrivals(pagination: PaginationDTO): Promise<UserArrivalResponseDto[]> {
         const arrivals = await this.userArrivalModel
             .find()
             .populate<{ user: UserDocument }>({ path: 'user', select: '-password' })
-            .sort({ arrivalDate: -1 });
+            .sort({ arrivalDate: -1 })
+            .skip(pagination.offset)
+            .limit(pagination.limit);
 
         return arrivals.map((arrival) => UserArrivalResponseDto.fromDocument(arrival));
     }
