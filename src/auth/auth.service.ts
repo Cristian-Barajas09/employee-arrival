@@ -8,6 +8,7 @@ import { UsersService } from "../users/users.service.js";
 import { JwtPayload } from "./interfaces/jwt-payload.interface.js";
 import { type UserDocument } from "../users/schemas/user.schema.js";
 import { QR_GENERATOR_TOKEN, type QRGenerator } from "../qr/qr.interface.js";
+import { UserResponseDto } from "../users/dto/user-response.dto.js";
 
 
 type GenerateUserQR =  Buffer<ArrayBufferLike>;
@@ -36,10 +37,10 @@ export class AuthService {
             createUserDTO.password = await this.encryptPassword.encrypt(createUserDTO.password);
 
 
-            const { password: _password, ...user } = await this.userService.create(createUserDTO)
+            const user = await this.userService.create(createUserDTO);
 
             return {
-                user,
+                user: UserResponseDto.fromDocument(user),
                 token: this.getJwtToken({id: user.id})
             };
 
@@ -64,10 +65,8 @@ export class AuthService {
             throw new UnauthorizedException('Not valid credentials')
         }
 
-        const { password: _password, ...userWithoutPassword } = user
-
         return {
-            user: userWithoutPassword,
+            user: UserResponseDto.fromDocument(user),
             token: this.getJwtToken({ id: user.id})
         };
     }
@@ -115,7 +114,7 @@ export class AuthService {
 
     public checkAuthStatus(user: UserDocument) {
         return {
-            user,
+            user: UserResponseDto.fromDocument(user),
             token: this.getJwtToken({ id: user.id })
         }
     }

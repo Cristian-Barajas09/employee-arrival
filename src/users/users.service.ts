@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { User, UserDocument } from './schemas/user.schema.js';
 import { UserArrival, UserArrivalDocument } from './schemas/user-arrival.schema.js';
+import { UserArrivalResponseDto } from './dto/user-arrival-response.dto.js';
+import { UserResponseDto } from './dto/user-response.dto.js';
 
 
 
@@ -18,8 +20,10 @@ export class UsersService {
         return await this.userModel.create(createUserDto);
     }
 
-    public async findAll(): Promise<UserDocument[]> {
-        return await this.userModel.find()
+    public async findAll(): Promise<UserResponseDto[]> {
+        const users = await this.userModel.find();
+
+        return users.map(UserResponseDto.fromDocument);
     }
 
     public async findOneById(userId: string): Promise<UserDocument> {
@@ -42,15 +46,20 @@ export class UsersService {
         return user;
     }
 
-    public async registerArrival(user: UserDocument): Promise<UserArrivalDocument> {
-        return await this.userArrivalModel.create({ user: user._id });
+    public async registerArrival(user: UserDocument): Promise<UserArrivalResponseDto> {
+        const arrival = await this.userArrivalModel.create({ user: user._id });
+        const populatedArrival = await arrival.populate<{ user: UserDocument }>('user');
+
+        return UserArrivalResponseDto.fromDocument(populatedArrival);
     }
 
-    public async findArrivals(): Promise<UserArrivalDocument[]> {
-        return await this.userArrivalModel
+    public async findArrivals(): Promise<UserArrivalResponseDto[]> {
+        const arrivals = await this.userArrivalModel
             .find()
-            .populate({ path: 'user', select: '-password' })
+            .populate<{ user: UserDocument }>({ path: 'user', select: '-password' })
             .sort({ arrivalDate: -1 });
+
+        return arrivals.map(UserArrivalResponseDto.fromDocument);
     }
 
     

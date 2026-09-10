@@ -3,6 +3,7 @@ import { UsersService } from "./users.service.js";
 import { ParseMongoIdPipe } from "../common/pipes/parse-mongo-id/parse-mongo-id.pipe.js";
 import { Auth } from "../auth/decorators/auth.decorator.js";
 import { UserRole } from "./schemas/user.schema.js";
+import { UserResponseDto } from "./dto/user-response.dto.js";
 
 
 @Controller("users")
@@ -27,7 +28,9 @@ export class UsersController {
     public async findOneById(
         @Param("id", ParseMongoIdPipe) id: string
     ) {
-        return this.usersService.findOneById(id);
+        const user = await this.usersService.findOneById(id);
+
+        return UserResponseDto.fromDocument(user);
     }
 
 }
