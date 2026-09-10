@@ -7,11 +7,13 @@ import { UsersModule } from '../users/users.module.js';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategy/jwt.strategy.js';
+import { QrModule } from '../qr/qr.module.js';
 
 @Module({
     imports: [
         ConfigModule,
         UsersModule,
+        QrModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

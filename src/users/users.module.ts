@@ -10,7 +10,6 @@ import { UsersController } from './users.controller.js';
         MongooseModule.forFeature([
             { name: User.name, schema: UserSchema }
         ]),
-        QrModule,
     ],
     controllers: [UsersController],
     providers: [UsersService],
