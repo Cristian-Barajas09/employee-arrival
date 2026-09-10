@@ -26,7 +26,7 @@ export class AuthService {
             createUserDTO.password = await this.encryptPassword.encrypt(createUserDTO.password);
 
 
-            const user = await this.userService.create(createUserDTO)
+            const { password: _password, ...user } = await this.userService.create(createUserDTO)
 
             return {
                 user,
