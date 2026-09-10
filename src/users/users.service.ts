@@ -10,6 +10,10 @@ import { JwtPayload } from '../auth/interfaces/jwt-payload.interface.js';
 type GenerateUserQR =  Buffer<ArrayBufferLike>;
 
 
+enum AccessType {
+    PHYSICAL_ACCESS = "PHYSICAL_ACCESS"
+}
+
 @Injectable()
 export class UsersService {
     public constructor(
@@ -57,7 +61,8 @@ export class UsersService {
 
         const generatedQR = await this.qrGenerator.generateQR({
             token: accessToken,
-            expiresIn: EXPIRES_IN
+            expiresIn: EXPIRES_IN,
+            accessType: AccessType.PHYSICAL_ACCESS
         });
 
         return generatedQR;
