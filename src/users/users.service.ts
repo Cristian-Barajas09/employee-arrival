@@ -46,6 +46,13 @@ export class UsersService {
         return await this.userArrivalModel.create({ user: user._id });
     }
 
+    public async findArrivals(): Promise<UserArrivalDocument[]> {
+        return await this.userArrivalModel
+            .find()
+            .populate({ path: 'user', select: '-password' })
+            .sort({ arrivalDate: -1 });
+    }
+
     
 
 }
