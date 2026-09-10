@@ -59,7 +59,7 @@ export class UsersService {
             .populate<{ user: UserDocument }>({ path: 'user', select: '-password' })
             .sort({ arrivalDate: -1 });
 
-        return arrivals.map(UserArrivalResponseDto.fromDocument);
+        return arrivals.map((arrival) => UserArrivalResponseDto.fromDocument(arrival));
     }
 
     

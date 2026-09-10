@@ -8,7 +8,7 @@ export class UserArrivalResponseDto {
     public user: UserResponseDto;
 
     public static fromDocument(
-        arrival: UserArrivalDocument & { user: UserDocument },
+        arrival: Omit<UserArrivalDocument, 'user'> & { user: UserDocument },
     ): UserArrivalResponseDto {
         const response = new UserArrivalResponseDto();
 
