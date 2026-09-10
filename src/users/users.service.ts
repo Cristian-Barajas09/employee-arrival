@@ -12,7 +12,7 @@ export class UsersService {
         @Inject(QR_GENERATOR_TOKEN) private readonly qrGenerator: QRGenerator
     ) { }
 
-    public async create(createUserDto: CreateUserDto): Promise<User> {
+    public async create(createUserDto: CreateUserDto): Promise<UserDocument> {
         return await this.userModel.create(createUserDto);
     }
 
@@ -30,8 +30,20 @@ export class UsersService {
         return user;
     }
 
+    public async findOneByDNI(dni: string): Promise<UserDocument> {
+        const user = await this.userModel.findOne({ dni });
+
+        if (!user) {
+            throw new NotFoundException(`the user with dni ${dni} not found`)
+        }
+
+        return user;
+    }
+
     public async generateAccessQR(user: UserDocument): Promise<Buffer<ArrayBufferLike>> {
-        return await this.qrGenerator.generateQR(user);
+        return await this.qrGenerator.generateQR({
+            dni: user.dni
+        });
     }
 
 }
