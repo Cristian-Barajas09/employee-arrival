@@ -20,14 +20,13 @@ import { MongooseModule } from '@nestjs/mongoose';
         const user = config.getOrThrow<string>("database.user");
         const password = config.getOrThrow<string>("database.password");
         const host = config.getOrThrow<string>("database.host");
-        const port = config.getOrThrow<string>("database.port");
+        const port = config.getOrThrow<number>("database.port");
         const database = config.getOrThrow<string>("database.dbName");
 
 
 
-
         return {
-            uri: `mongodb://${user}:${password}@${host}:${port}/${database}`
+            uri: `mongodb://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}?authSource=admin`
           }
       },
     }),
