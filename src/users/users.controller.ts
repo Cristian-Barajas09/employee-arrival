@@ -26,21 +26,4 @@ export class UsersController {
         return this.usersService.findOneById(id);
     }
 
-    @Post("generate/qr")
-    @Auth()
-    public async generateQR(
-        @GetUser() user: UserDocument,
-        @Res({ passthrough: true }) response: Response
-    ) {
-
-        const generatedAccess = await this.usersService.generateAccessQR(user);
-
-        response.set({
-            'Content-Type': 'image/png',
-        });
-
-
-        return new StreamableFile(generatedAccess);
-    }
-
 }

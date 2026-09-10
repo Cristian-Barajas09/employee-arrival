@@ -6,8 +6,16 @@ import { ENCRYPT_PASSWORD_TOKEN, type EncryptPasswordAdapter } from "../common/i
 import { LoginUserDTO } from "./dto/login-user.dto.js";
 import { UsersService } from "../users/users.service.js";
 import { JwtPayload } from "./interfaces/jwt-payload.interface.js";
-import { User, UserDocument } from "../users/schemas/user.schema.js";
+import { type UserDocument } from "../users/schemas/user.schema.js";
+import { QR_GENERATOR_TOKEN, type QRGenerator } from "../qr/qr.interface.js";
 
+
+type GenerateUserQR =  Buffer<ArrayBufferLike>;
+
+
+enum AccessType {
+    PHYSICAL_ACCESS = "PHYSICAL_ACCESS"
+}
 @Injectable()
 export class AuthService {
     private readonly logger = new Logger('AuthService')
@@ -17,7 +25,9 @@ export class AuthService {
 
         @Inject(ENCRYPT_PASSWORD_TOKEN)
         private readonly encryptPassword: EncryptPasswordAdapter,
-        private readonly jwtService: JwtService
+        private readonly jwtService: JwtService,
+        @Inject(QR_GENERATOR_TOKEN) private readonly qrGenerator: QRGenerator,
+
     ) { }
 
     public async register(createUserDTO: CreateUserDto) {
@@ -60,6 +70,24 @@ export class AuthService {
             user: userWithoutPassword,
             token: this.getJwtToken({ id: user.id})
         };
+    }
+
+    public async generateAccessQR(user: UserDocument): Promise<GenerateUserQR> {
+
+        const payload: JwtPayload = {
+            id: user.id
+        }
+        const EXPIRES_IN = '5m'
+
+        const accessToken = this.jwtService.sign(payload, { expiresIn: EXPIRES_IN });
+
+        const generatedQR = await this.qrGenerator.generateQR({
+            token: accessToken,
+            expiresIn: EXPIRES_IN,
+            accessType: AccessType.PHYSICAL_ACCESS
+        });
+
+        return generatedQR;
     }
 
     private getJwtToken(payload: JwtPayload) {
